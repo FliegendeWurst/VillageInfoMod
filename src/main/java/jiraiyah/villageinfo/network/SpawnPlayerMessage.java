@@ -17,7 +17,9 @@
  */
 package jiraiyah.villageinfo.network;
 
+import java.nio.charset.Charset;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
 import jiraiyah.villageinfo.events.WorldDataCollector;
 import jiraiyah.villageinfo.inits.NetworkMessages;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -60,9 +62,7 @@ public class SpawnPlayerMessage implements IMessageHandler<SpawnPlayerMessage.Pa
 		@Override
 		public void fromBytes(ByteBuf buf)
 		{
-			int size = buf.readInt();
-			byte[] bytes = buf.readBytes(size).array();
-			String id = new String(bytes);
+			String id = new String(ByteBufUtil.getBytes(buf), Charset.forName("UTF-8"));
 			playerId = UUID.fromString(id);
 		}
 
@@ -71,9 +71,7 @@ public class SpawnPlayerMessage implements IMessageHandler<SpawnPlayerMessage.Pa
 		{
 			String id = playerId.toString();
 			byte[] bytes = id.getBytes();
-			buf.writeInt(bytes.length);
 			buf.writeBytes(bytes);
 		}
 	}
 }
-

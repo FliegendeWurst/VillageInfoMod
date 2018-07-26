@@ -30,10 +30,10 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.common.DimensionManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -64,40 +64,37 @@ public class WorldDataCollector
 	@SubscribeEvent
 	public void worldLoadEvent(WorldEvent.Load event)
 	{
-		if (spawnPoint == null)
-			getSpawnPoint();
-		if (xCoords == null || zCoords == null || xCoords.size() == 0 || zCoords.size() == 0)
-			getSpawnChunks();
+		World world = event.getWorld();
+		if(world == DimensionManager.getWorld(0)) //if overworld
+		{
+			spawnPoint = world.getSpawnPoint();
+			getSpawnChunks(event.getWorld());
+		}
 	}
 
-	private static void getSpawnChunks()
+	private static void getSpawnChunks(World world)
 	{
 		boolean foundFirstChunk = false;
 		int cnt = 1;
-		IChunkProvider chunkProvider = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getChunkProvider();
+		IChunkProvider chunkProvider = world.getChunkProvider();
 		for (int x = spawnPoint.getX() - 256; x < spawnPoint.getX() + 256; x += cnt)
 		{
 			for (int z = spawnPoint.getZ() - 256; z < spawnPoint.getZ() + 256; z += cnt)
 			{
 				BlockPos tempPos = new BlockPos(x,0,z);
-				Chunk chunk = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getChunkFromBlockCoords(tempPos);
-				if (FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().isSpawnChunk(chunk.xPosition, chunk.zPosition))
+				Chunk chunk = world.getChunkFromBlockCoords(tempPos);
+				if (world.isSpawnChunk(chunk.x, chunk.z))
 				{
 					if (!foundFirstChunk)
 					{
 						foundFirstChunk = true;
 						cnt = 16;
 					}
-					xCoords.add(chunk.xPosition);
-					zCoords.add(chunk.zPosition);
+					xCoords.add(chunk.x);
+					zCoords.add(chunk.z);
 				}
 			}
 		}
-	}
-
-	private static void getSpawnPoint()
-	{
-		spawnPoint = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSpawnPoint();
 	}
 
 	@SubscribeEvent
@@ -128,7 +125,7 @@ public class WorldDataCollector
 
 	private void resetVillageDataList()
 	{
-		World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
+		World world = DimensionManager.getWorld(0);
 		VillageCollection villageCollection = world.getVillageCollection();
 		List<Village> allVillages = villageCollection.getVillageList();
 		villageDataList.clear();
@@ -141,22 +138,26 @@ public class WorldDataCollector
 				VillageServerMessage.sendMessage(player, tempList);
 				return;
 			}
+			System.out.println(player + " " + world);
 			EntityPlayer entityPlayer = world.getPlayerEntityByUUID(player);
+			if(entityPlayer == null) //when not on overworld
+				return;
+			System.out.println(entityPlayer);
 			float psx = entityPlayer.getPosition().getX();
 			float psz = entityPlayer.getPosition().getZ();
 			allVillages.stream()
-					.filter(v -> psx < v.getCenter().getX() + v.getVillageRadius() + Config.villageDetectDistance &&
-							psz < v.getCenter().getZ() + v.getVillageRadius() + Config.villageDetectDistance &&
-							psx > v.getCenter().getX() - v.getVillageRadius() - Config.villageDetectDistance &&
-							psz > v.getCenter().getZ() - v.getVillageRadius() - Config.villageDetectDistance)
-					.forEach(v -> {
-						int radius = v.getVillageRadius();
-						int villagerCount = v.getNumVillagers();
-						int reputation = v.getReputationForPlayer(entityPlayer.getName());
-						BlockPos center = v.getCenter();
-						List<VillageDoorInfo> doorInfos = v.getVillageDoorInfoList();
-						List<BlockPos> doorPositions = doorInfos.stream().map(VillageDoorInfo::getDoorBlockPos).collect(Collectors.toList());
-						tempList.add(new VillageData(radius, center, doorPositions, villagerCount, reputation));
+				.filter(v -> psx < v.getCenter().getX() + v.getVillageRadius() + Config.villageDetectDistance &&
+					psz < v.getCenter().getZ() + v.getVillageRadius() + Config.villageDetectDistance &&
+					psx > v.getCenter().getX() - v.getVillageRadius() - Config.villageDetectDistance &&
+					psz > v.getCenter().getZ() - v.getVillageRadius() - Config.villageDetectDistance)
+				.forEach(v -> {
+					int radius = v.getVillageRadius();
+					int villagerCount = v.getNumVillagers();
+					int reputation = v.getPlayerReputation(player);
+					BlockPos center = v.getCenter();
+					List<VillageDoorInfo> doorInfos = v.getVillageDoorInfoList();
+					List<BlockPos> doorPositions = doorInfos.stream().map(VillageDoorInfo::getDoorBlockPos).collect(Collectors.toList());
+					tempList.add(new VillageData(radius, center, doorPositions, villagerCount, reputation));
 					});
 			if (!villageDataList.containsKey(player))
 				villageDataList.put(player, tempList);
@@ -169,7 +170,6 @@ public class WorldDataCollector
 
 	public static void getSpawnInformation(UUID playerId)
 	{
-
 		SpawnServerMessage.sendMessage(playerId, spawnPoint, xCoords,zCoords);
 	}
 }

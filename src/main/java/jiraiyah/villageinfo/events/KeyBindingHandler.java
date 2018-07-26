@@ -38,7 +38,7 @@ public class KeyBindingHandler
 		if(KeyBindings.VILLAGE_DATA.isPressed())
 		{
 			VillageInfo.showVillages = !VillageInfo.showVillages;
-			VillagePlayerMessage.sendMessage(Minecraft.getMinecraft().thePlayer.getUniqueID(), VillageInfo.showVillages);
+			VillagePlayerMessage.sendMessage(Minecraft.getMinecraft().player.getUniqueID(), VillageInfo.showVillages);
 		}
 		if (KeyBindings.VILLAGE_DATA_BORDER.isPressed())
 			VillageInfo.villageBorder = !VillageInfo.villageBorder;
@@ -63,7 +63,7 @@ public class KeyBindingHandler
 		if(KeyBindings.SPAWN_CHUNK.isPressed())
 		{
 			WorldSpawnHandler.showSpawnChunks = !WorldSpawnHandler.showSpawnChunks;
-			SpawnPlayerMessage.sendMessage(Minecraft.getMinecraft().thePlayer.getUniqueID());
+			SpawnPlayerMessage.sendMessage(Minecraft.getMinecraft().player.getUniqueID());
 		}
 	}
 }
