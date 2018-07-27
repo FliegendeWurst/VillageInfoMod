@@ -138,11 +138,9 @@ public class WorldDataCollector
 				VillageServerMessage.sendMessage(player, tempList);
 				return;
 			}
-			System.out.println(player + " " + world);
 			EntityPlayer entityPlayer = world.getPlayerEntityByUUID(player);
 			if(entityPlayer == null) //when not on overworld
 				return;
-			System.out.println(entityPlayer);
 			float psx = entityPlayer.getPosition().getX();
 			float psz = entityPlayer.getPosition().getZ();
 			allVillages.stream()
