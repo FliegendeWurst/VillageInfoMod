@@ -76,7 +76,8 @@ public class VillageDataHandler
 		{
 			double distance = Math.sqrt(playerPos.squareDistanceTo(data.center.getX(), data.center.getY(), data.center.getZ()));
 			double scaleFactor = -0.015f * distance / 4.209f;
-			boolean canSpawn = data.doorPositions.size() > 20;
+			boolean canSpawn = data.doorPositions.size() > 20
+				&& data.villagerCount >= 10;
 			GlStateManager.pushMatrix();
 			{
 				GlStateManager.translate(0.5f + data.center.getX() - plX,
