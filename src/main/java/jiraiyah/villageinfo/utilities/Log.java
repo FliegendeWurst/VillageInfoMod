@@ -17,8 +17,6 @@
  */
 package jiraiyah.villageinfo.utilities;
 
-import jiraiyah.villageinfo.references.Reference;
-import net.minecraftforge.fml.common.FMLLog;
 import org.apache.logging.log4j.Level;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
@@ -26,7 +24,7 @@ public class Log
 {
 	public static void log(Level logLevel, Object object)
 	{
-		FMLLog.log( Reference.MOD_NAME, logLevel, String.valueOf( object ) );
+		System.out.println(object);
 	}
 
 	public static void all ( Object object )

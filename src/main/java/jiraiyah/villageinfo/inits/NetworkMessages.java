@@ -22,27 +22,30 @@ import jiraiyah.villageinfo.network.SpawnServerMessage;
 import jiraiyah.villageinfo.network.VillagePlayerMessage;
 import jiraiyah.villageinfo.network.VillageServerMessage;
 import jiraiyah.villageinfo.references.Reference;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.fml.relauncher.Side;
+
+import static jiraiyah.villageinfo.VillageInfo.MODID;
 
 public class NetworkMessages
 {
-	public static SimpleNetworkWrapper network;
+	private static final String PROTOCOL_VERSION = "1";
+	public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
+			new ResourceLocation(MODID, "main"),
+			() -> PROTOCOL_VERSION,
+			PROTOCOL_VERSION::equals,
+			PROTOCOL_VERSION::equals
+	);
 
-	public static void register()
-	{
-		network = new SimpleNetworkWrapper( Reference.MOD_ID );
-		network.registerMessage( VillageServerMessage.class, VillageServerMessage.Packet.class, nextId(), Side.CLIENT );
-		network.registerMessage( VillagePlayerMessage.class, VillagePlayerMessage.Packet.class, nextId(), Side.SERVER );
-		network.registerMessage( SpawnServerMessage.class, SpawnServerMessage.Packet.class, nextId(), Side.CLIENT );
-		network.registerMessage( SpawnPlayerMessage.class, SpawnPlayerMessage.Packet.class, nextId(), Side.SERVER );
+	public static void register() {
+		int id = 0;
+		INSTANCE.registerMessage(id++, VillageServerMessage.class);
+		INSTANCE.registerMessage(id++, VillagePlayerMessage.class);
+		INSTANCE.registerMessage(id++, SpawnServerMessage.class);
+		INSTANCE.registerMessage(id++, SpawnPlayerMessage.class);
 		//Log.info("=========================================================> Registered Network Messages");
-	}
-
-	private static int ID = 0;
-
-	private static int nextId()
-	{
-		return ID++;
 	}
 }

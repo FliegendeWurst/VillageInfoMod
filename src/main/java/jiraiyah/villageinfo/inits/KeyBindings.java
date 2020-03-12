@@ -19,10 +19,10 @@ package jiraiyah.villageinfo.inits;
 
 import jiraiyah.villageinfo.references.Reference;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
 import net.minecraftforge.client.settings.KeyConflictContext;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import org.lwjgl.input.Keyboard;
 
 public class KeyBindings
 {
@@ -42,30 +42,30 @@ public class KeyBindings
 	public static void register()
 	{
 		VILLAGE_DATA = new KeyBinding(Reference.MOD_ID.toLowerCase()
-			+ ".key.villagedata", KeyConflictContext.IN_GAME, Keyboard.KEY_V, Reference.MOD_ID.toLowerCase() + ".key.categories");
+			+ ".key.villagedata", KeyConflictContext.IN_GAME, /* V */ InputMappings.Type.KEYSYM.getOrMakeInput(86), Reference.MOD_ID.toLowerCase() + ".key.categories");
 
 		VILLAGE_DATA_DOORS = new KeyBinding(Reference.MOD_ID.toLowerCase()
-			+ ".key.villagedatadoors", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, Keyboard.KEY_1, Reference.MOD_ID.toLowerCase() + ".key.categories");
+			+ ".key.villagedatadoors", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, InputMappings.Type.KEYSYM.getOrMakeInput(49), Reference.MOD_ID.toLowerCase() + ".key.categories");
 		VILLAGE_DATA_GOLEM = new KeyBinding(Reference.MOD_ID.toLowerCase()
-			+ ".key.villagedatagolem", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, Keyboard.KEY_2, Reference.MOD_ID.toLowerCase() + ".key.categories");
+			+ ".key.villagedatagolem", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, InputMappings.Type.KEYSYM.getOrMakeInput(50), Reference.MOD_ID.toLowerCase() + ".key.categories");
 		VILLAGE_DATA_BORDER = new KeyBinding(Reference.MOD_ID.toLowerCase()
-			+ ".key.villagedataborder", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, Keyboard.KEY_3, Reference.MOD_ID.toLowerCase() + ".key.categories");
+			+ ".key.villagedataborder", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, InputMappings.Type.KEYSYM.getOrMakeInput(51), Reference.MOD_ID.toLowerCase() + ".key.categories");
 		VILLAGE_DATA_INFO = new KeyBinding(Reference.MOD_ID.toLowerCase()
-			+ ".key.villagedatainfo", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, Keyboard.KEY_4, Reference.MOD_ID.toLowerCase() + ".key.categories");
+			+ ".key.villagedatainfo", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, InputMappings.Type.KEYSYM.getOrMakeInput(52), Reference.MOD_ID.toLowerCase() + ".key.categories");
 		VILLAGE_DATA_CENTER = new KeyBinding(Reference.MOD_ID.toLowerCase()
-			+ ".key.villagedatacenter", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, Keyboard.KEY_5, Reference.MOD_ID.toLowerCase() + ".key.categories");
+			+ ".key.villagedatacenter", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, InputMappings.Type.KEYSYM.getOrMakeInput(53), Reference.MOD_ID.toLowerCase() + ".key.categories");
 		VILLAGE_DATA_SPHERE = new KeyBinding(Reference.MOD_ID.toLowerCase()
-			+ ".key.villagedatasphere", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, Keyboard.KEY_6, Reference.MOD_ID.toLowerCase() + ".key.categories");
+			+ ".key.villagedatasphere", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, InputMappings.Type.KEYSYM.getOrMakeInput(54), Reference.MOD_ID.toLowerCase() + ".key.categories");
 		SOLID_DRAW = new KeyBinding(Reference.MOD_ID.toLowerCase()
-			+ ".key.soliddraw", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, Keyboard.KEY_7, Reference.MOD_ID.toLowerCase() + ".key.categories");
+			+ ".key.soliddraw", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, InputMappings.Type.KEYSYM.getOrMakeInput(55), Reference.MOD_ID.toLowerCase() + ".key.categories");
 		Disable_DEPTH = new KeyBinding(Reference.MOD_ID.toLowerCase()
-			+ ".key.disabledepth", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, Keyboard.KEY_8, Reference.MOD_ID.toLowerCase() + ".key.categories");
+			+ ".key.disabledepth", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, InputMappings.Type.KEYSYM.getOrMakeInput(56), Reference.MOD_ID.toLowerCase() + ".key.categories");
 		VILLAGE_PER_COLOR = new KeyBinding(Reference.MOD_ID.toLowerCase()
-			+ ".key.pervillagecolor", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, Keyboard.KEY_9, Reference.MOD_ID.toLowerCase() + ".key.categories");
+			+ ".key.pervillagecolor", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, InputMappings.Type.KEYSYM.getOrMakeInput(57), Reference.MOD_ID.toLowerCase() + ".key.categories");
 		SPAWN_CHUNK = new KeyBinding(Reference.MOD_ID.toLowerCase()
-			+ ".key.spawnchunk", KeyConflictContext.IN_GAME, Keyboard.KEY_C, Reference.MOD_ID.toLowerCase() + ".key.categories");
+			+ ".key.spawnchunk", KeyConflictContext.IN_GAME, /* C */ InputMappings.Type.KEYSYM.getOrMakeInput(67), Reference.MOD_ID.toLowerCase() + ".key.categories");
 		CHUNK_BORDER = new KeyBinding(Reference.MOD_ID.toLowerCase()
-			+ ".key.chunkborder", KeyConflictContext.IN_GAME, Keyboard.KEY_F6, Reference.MOD_ID.toLowerCase() + ".key.categories");
+			+ ".key.chunkborder", KeyConflictContext.IN_GAME, /* F6 */ InputMappings.Type.KEYSYM.getOrMakeInput(295), Reference.MOD_ID.toLowerCase() + ".key.categories");
 
 		ClientRegistry.registerKeyBinding(VILLAGE_DATA);
 		ClientRegistry.registerKeyBinding(VILLAGE_DATA_DOORS);

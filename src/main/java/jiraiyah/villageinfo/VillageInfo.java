@@ -17,22 +17,24 @@
  */
 package jiraiyah.villageinfo;
 
-import jiraiyah.villageinfo.infrastructure.Config;
-import jiraiyah.villageinfo.proxies.CommonProxy;
+import jiraiyah.villageinfo.events.ChunkDataHandler;
+import jiraiyah.villageinfo.events.KeyBindingHandler;
+import jiraiyah.villageinfo.events.VillageDataHandler;
+import jiraiyah.villageinfo.events.WorldDataCollector;
+import jiraiyah.villageinfo.events.WorldSpawnHandler;
+import jiraiyah.villageinfo.inits.StartupClientOnly;
+import jiraiyah.villageinfo.inits.StartupCommon;
 import jiraiyah.villageinfo.references.Reference;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
-@Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME)
-public class VillageInfo
-{
-    @SidedProxy(clientSide = Reference.CLIENT_PROXY, serverSide = Reference.COMMON_PROXY)
-    public static CommonProxy PROXY;
+@Mod(Reference.MOD_ID)
+public class VillageInfo {
+    public static final String MODID = "villageinfo";
+    public static IEventBus MOD_EVENT_BUS;
 
     public static boolean solidDraw;
     public static boolean villageBorder;
@@ -46,22 +48,45 @@ public class VillageInfo
     public static boolean perVillageColor;
     public static boolean chunkBorder;
 
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
-        PROXY.preInit(event);
-        Config.loadConfigsFromFile(event.getSuggestedConfigurationFile());
-    }
+    public VillageInfo() {
+        MOD_EVENT_BUS = FMLJavaModLoadingContext.get().getModEventBus();
 
-    @EventHandler
-    public void init(FMLInitializationEvent event)
-    {
-        PROXY.init(event);
-    }
+        // The event bus register method will search these classes for methods which are interested in startup events
+        //    (i.e. methods that are decorated with the @SubscribeEvent annotation)
 
-    @EventHandler
-    public void postInit(FMLPostInitializationEvent event)
-    {
-        PROXY.postInit(event);
+        // Beware - there are two event busses: the MinecraftForge.EVENT_BUS and your own ModEventBus.
+        //  If you subscribe your event to the wrong bus, it will never get called.
+        // likewise, beware of the difference between static and non-static methods, i.e.
+        //  If you register a class, but the @SubscribeEvent is on a non-static method, it won't be called.  e.g.
+        //  MOD_EVENT_BUS.register(MyClass.class);
+        //  public class ServerLifecycleEvents {
+        //    @SubscribeEvent
+        //      public void onServerStartingEvent(FMLServerStartingEvent event) { // missing static! --> never gets called}
+        //  }
+
+        // Based on my testing: ModEventBus is used for setup events only, in the following order:
+        // * RegistryEvent of all types
+        // * ColorHandlerEvent for blocks & items
+        // * ParticleFactoryRegisterEvent
+        // * FMLCommonSetupEvent
+        // * TextureStitchEvent
+        // * FMLClientSetupEvent or FMLDedicatedServerSetupEvent
+        // * ModelRegistryEvent
+        // * Other ModLifecycleEvents such as InterModEnqueueEvent, InterModProcessEvent
+        // Everything else: the MinecraftForge.EVENT_BUS
+
+        MOD_EVENT_BUS.register(StartupClientOnly.class);
+        MOD_EVENT_BUS.register(StartupCommon.class);
+
+        MinecraftForge.EVENT_BUS.register(new WorldDataCollector());
+        MinecraftForge.EVENT_BUS.register(new VillageDataHandler());
+        MinecraftForge.EVENT_BUS.register(new WorldSpawnHandler());
+        MinecraftForge.EVENT_BUS.register(new KeyBindingHandler());
+        MinecraftForge.EVENT_BUS.register(new ChunkDataHandler());
+        // NetworkMessages.register();
+
+        //----------------
+        //MOD_EVENT_BUS.register(minecraftbyexample.usefultools.debugging.StartupClientOnly.class);
+        //MOD_EVENT_BUS.register(minecraftbyexample.usefultools.debugging.StartupCommon.class);
     }
 }
